@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { WalletService } from './wallet.service';
+import { Wallet } from './wallet.schema';
 
 @Controller()
 export class WalletController {
@@ -18,10 +19,10 @@ export class WalletController {
   /**
    * Fetches wallets by a group identifier.
    * @param {string} id - The unique identifier for the wallet group.
-   * @returns {Wallet[]} Returns an array of wallets associated with the group ID.
+   * @returns {Promise<Wallet[]>} Returns an array of wallets associated with the group ID.
    */
-    @Get('/wallets/:groupId')
-    getWallets(@Param('groupId') groupId: string): any[] {
+    @Get('/wallets/group/:groupId')
+    getWallets(@Param('groupId') groupId: string): Promise<Wallet[]> {
       return this.walletService.getWalletsByGroup(groupId);
     }
 }

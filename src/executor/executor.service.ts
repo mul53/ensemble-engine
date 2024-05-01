@@ -26,7 +26,7 @@ export class ExecutorService {
     const depositAmount = parseEther('0.0001');
     // Implementation of task execution
     console.log(`Executing task: ${taskName}`);
-    const wallets = this.walletService.getWalletsByGroup(groupId);
+    const wallets = await this.walletService.getWalletsByGroup(groupId);
     const nonce = await this.provider.getTransactionCount(this.depositAccount.address);
     for (const wallet of wallets) {
       this.depositAccount.sendTransaction({
