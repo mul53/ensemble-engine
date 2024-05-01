@@ -1,7 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Wallet } from 'ethers';
 
-const generateId = () =>  Math.random().toString(16).slice(2)
+// const generateId = () =>  Math.random().toString(16).slice(2)
+let id = 0
+const generateId = () => {
+  id++
+  return id.toString()
+}
+
 @Injectable()
 export class WalletService {
   public groups: { [key: string]: any } = {}

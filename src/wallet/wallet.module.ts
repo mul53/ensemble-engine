@@ -6,5 +6,6 @@ import { WalletService } from './wallet.service';
   imports: [],
   controllers: [WalletController],
   providers: [WalletService],
+  exports: [WalletService]
 })
 export class WalletModule {}
