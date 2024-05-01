@@ -23,17 +23,20 @@ export class ExecutorService {
 
   async executeOnboard(groupId: string) {
     const taskName = 'onboard';
-    const depositAmount = parseEther('0.0001');
+    const depositAmount = parseEther('0.00001');
     // Implementation of task execution
     console.log(`Executing task: ${taskName}`);
     const wallets = await this.walletService.getWalletsByGroup(groupId);
-    const nonce = await this.provider.getTransactionCount(this.depositAccount.address);
+    let nonce = await this.provider.getTransactionCount(this.depositAccount.address);
     for (const wallet of wallets) {
-      this.depositAccount.sendTransaction({
+      console.log(`Transferring funds to wallet: ${wallet.address}`);
+      const txResponse = await this.depositAccount.sendTransaction({
         to: wallet.address,
         value: depositAmount,
         nonce: nonce
       });
+      console.log(`Transaction hash: ${txResponse.hash}`);
+      nonce++;
     }
     // fetch a deposit account and use it to transfer funds to the wallets
     // console.log(`Onboarding wallets: ${wallets}`);
