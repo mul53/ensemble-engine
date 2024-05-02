@@ -7,5 +7,6 @@ import { ExecutorService } from './executor.service';
   imports: [WalletModule],
   controllers: [ExecutorController],
   providers: [ExecutorService],
+  exports: [ExecutorService]
 })
 export class ExecutorModule {}  
