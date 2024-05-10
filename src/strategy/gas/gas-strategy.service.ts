@@ -22,7 +22,14 @@ export class GasStrategyService {
     const feeData = await this.provider.getFeeData()
     if (feeData.gasPrice > BigInt(process.env.MAX_GAS_PRICE)) {
       console.log(`Gas price ${feeData.gasPrice} is higher than the maximum allowed gas price ${process.env.MAX_GAS_PRICE}`);
-      this.executorService.executeOnboard(process.env.GAS_STRATEGY_GROUP_ID)
+      const commandDto = {
+        groupId: process.env.GAS_STRATEGY_GROUP_ID,
+        name: 'OnBoard',
+        description: 'Onboard wallets',
+        status: 'PENDING',
+        depositAmount: process.env.DEPOSIT_AMOUNT
+      }
+      this.executorService.executeOnboard(commandDto)
     } else {
       console.log(`Gas price ${feeData.gasPrice} is within the acceptable range`);
     }

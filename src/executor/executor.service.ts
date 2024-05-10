@@ -1,6 +1,17 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { WalletService } from '../wallet/wallet.service'; // Adjust the import path as necessary
-import { BaseWallet, JsonRpcProvider, parseEther, parseUnits, Provider, SigningKey } from 'ethers';
+import { BaseWallet, JsonRpcProvider, parseEther, parseUnits, Provider, SigningKey, Wallet } from 'ethers';
+import { CommandDto } from 'src/commands/command/commad.dto';
+import { LoadTestCommandDto } from 'src/commands/load-test/load-test.dto';
+import { OnboardCommandDto } from 'src/commands/onboard/onboard.dto';
+
+function pickRandomValue(arr) {
+  if (arr.length === 0) {
+      throw new Error('The array cannot be empty');
+  }
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
+}
 
 @Injectable()
 export class ExecutorService {
@@ -13,19 +24,29 @@ export class ExecutorService {
     this.depositAccount = new BaseWallet(new SigningKey(process.env.DEPOSIT_ACCOUNT_PRIVATE_KEY), this.provider);
   }
   
-  executeTask(taskName: string): string {
-    // Implementation of task execution
-    console.log(`Executing task: ${taskName}`);
-    if (taskName === 'create') {
-      return `Task ${taskName} executed successfully.`;
+  executeCommand(commandDto: CommandDto) {
+    let command: CommandDto
+    switch (commandDto.name) {
+      case 'LoadTest':
+        command = commandDto as LoadTestCommandDto;
+        const loadTestCommandDto = commandDto as LoadTestCommandDto;
+        this.executeLoadTest(loadTestCommandDto);
+        break;
+      case 'OnBoard':
+        const onBoardCommandDto = commandDto as OnboardCommandDto;
+        this.executeOnboard(onBoardCommandDto);
+        break;
+      default:
+          console.log('Unknown command');
+          throw new Error('Method not implemented.'); 
     }
   }
 
-  async executeOnboard(groupId: string) {
-    const taskName = 'onboard';
-    const depositAmount = parseEther(process.env.DEPOSIT_AMOUNT);
+  async executeOnboard(commandDto: OnboardCommandDto) {
+    const groupId = commandDto.groupId;
+    const { depositAmount } = commandDto;
     // Implementation of task execution
-    console.log(`Executing task: ${taskName}`);
+    console.log(`Executing task: ${commandDto.name}`);
     console.log(`Deposit account address: ${this.depositAccount.address}`);
     const wallets = await this.walletService.getWalletsByGroup(groupId);
     let nonce = await this.provider.getTransactionCount(this.depositAccount.address);
@@ -43,6 +64,35 @@ export class ExecutorService {
     }
     // fetch a deposit account and use it to transfer funds to the wallets
     // console.log(`Onboarding wallets: ${wallets}`);
-    console.log(`Task ${taskName} executed successfully.`);
+    console.log(`Task ${commandDto.name} executed successfully.`);
+  }
+
+  async executeLoadTest(commandDto: LoadTestCommandDto) {
+    const  { groupId } = commandDto
+    const wallets = await this.walletService.getWalletsByGroup(groupId);
+
+    const start = new Date()
+    
+    const nOfTransctions = 100
+    for (let i=0; i < nOfTransctions; i++) {
+      const fromWallet = pickRandomValue(wallets)
+      const toWallet = pickRandomValue(wallets)
+      const wallet = new Wallet(fromWallet.privateKey)
+
+      const amount = parseEther('0.0000001');
+      console.log(`Transferring funds from ${fromWallet.address} to ${toWallet.address}`);
+      const txResponse = await wallet.sendTransaction({
+        to: toWallet.address,
+        value: amount,
+        gasLimit: 21000
+      });
+      console.log(`Transaction hash: ${txResponse.hash}`);
+    }
+    const end = new Date()
+    
+    // assogn a group ID to the command or onboard the command
+    // take two wallets from the group
+    // send a transaction from one wallet to another
+
   }
 }

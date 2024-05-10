@@ -1,5 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ExecutorService } from './executor.service';
+import { CommandDto } from 'src/commands/command/commad.dto';
 
 @Controller('execute')
 export class ExecutorController {
@@ -7,6 +8,18 @@ export class ExecutorController {
 
   @Post('onboard')
   async executeOnboard(@Body('groupId') groupId: string) {
-    return this.executorService.executeOnboard(groupId)
+    const commandDto = {
+      groupId: groupId,
+      name: 'OnBoard',
+      description: 'Onboard wallets',
+      status: 'PENDING',
+      depositAmount: process.env.DEPOSIT_AMOUNT
+    }
+    return this.executorService.executeOnboard(commandDto)
+  }
+
+
+  async executeCommand(@Body() commandDto: CommandDto) {
+    return this.executorService.executeCommand(commandDto)
   }
 }
