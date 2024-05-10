@@ -7,10 +7,11 @@ import { ExecutorModule } from './executor/executor.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { GasStrategyModule } from './triggers/gas/gas-strategy.module';
-// import { GasStrategyService } from './strategy/gas/gas-strategy.service';
+import { BlockTriggerModule } from './triggers/block/block-trigger.module';
+
 @Module({
   imports: [
-    WalletModule, ExecutorModule, GasStrategyModule,
+    WalletModule, ExecutorModule, GasStrategyModule, BlockTriggerModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     ScheduleModule.forRoot()
