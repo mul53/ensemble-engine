@@ -6,7 +6,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { ExecutorModule } from './executor/executor.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
-import { GasStrategyModule } from './strategy/gas/gas-strategy.module';
+import { GasStrategyModule } from './triggers/gas/gas-strategy.module';
 // import { GasStrategyService } from './strategy/gas/gas-strategy.service';
 @Module({
   imports: [
