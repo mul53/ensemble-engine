@@ -1,9 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { WalletService } from '../wallet/wallet.service'; // Adjust the import path as necessary
-import { BaseWallet, JsonRpcProvider, parseEther, parseUnits, Provider, SigningKey, Wallet } from 'ethers';
-import { CommandDto } from 'src/commands/command/commad.dto';
-import { LoadTestCommandDto } from 'src/commands/load-test/load-test.dto';
-import { OnboardCommandDto } from 'src/commands/onboard/onboard.dto';
+import { BaseWallet, Contract, JsonRpcProvider, parseEther, parseUnits, Provider, SigningKey, Wallet } from 'ethers';
+import { CommandDto } from 'src/commands/commad.dto';
+import { LoadTestCommandDto } from 'src/commands/load-test.dto';
+import { OnboardCommandDto } from 'src/commands/onboard.dto';
+import { CallCommandDto } from 'src/commands/call-command.dto';
 
 function pickRandomValue(arr) {
   if (arr.length === 0) {
@@ -36,6 +37,10 @@ export class ExecutorService {
         const onBoardCommandDto = commandDto as OnboardCommandDto;
         this.executeOnboard(onBoardCommandDto);
         break;
+        case 'CallContract':
+          const callCommandDto = commandDto as CallCommandDto;
+          this.executeCall(callCommandDto);
+          break;
       default:
           console.log('Unknown command');
           throw new Error('Method not implemented.'); 
@@ -94,5 +99,15 @@ export class ExecutorService {
     // take two wallets from the group
     // send a transaction from one wallet to another
 
+  }
+
+  async executeCall(callCommandDto: CallCommandDto) {
+    // Implementation of task execution
+    const fromWallet = await this.walletService.getWallet(callCommandDto.fromWalletAddress);
+    const senderWallet = new Wallet(fromWallet.privateKey);
+    
+    const abi = callCommandDto.contractAbi
+    const contract = new Contract(callCommandDto.contractAddress, abi, senderWallet);
+    throw new Error('Method not implemented.');
   }
 }

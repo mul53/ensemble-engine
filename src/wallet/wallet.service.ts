@@ -49,4 +49,18 @@ export class WalletService {
       }
       return wallets;
     }
+
+      /**
+     * Retrieves a wallet by its address.
+     * @param {string} address - The Ethereum address of the wallet.
+     * @returns {Promise<Wallet>} The wallet document if found.
+     * @throws {NotFoundException} Throws if no wallet is found for the given address.
+     */
+      async getWallet(address: string): Promise<Wallet> {
+        const wallet = await this.walletModel.findOne({ address }).exec();
+        if (!wallet) {
+            throw new NotFoundException(`Wallet with address ${address} not found.`);
+        }
+        return wallet;
+    }
 }
