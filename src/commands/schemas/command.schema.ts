@@ -14,16 +14,8 @@ export class Command extends Document {
   @Prop({ required: true })
   network: string;
 
-  static parseKpi(kpiString: string): Object {
-    try {
-      console.log(kpiString);
-      const kpi: Object = JSON.parse(kpiString);
-      
-      return kpi;
-    } catch (error) {
-      throw new Error('Invalid KPI JSON string');
-    }
-  }
+  @Prop({ default: false })
+  isActive: boolean;
 }
 
 export const CommandSchema = SchemaFactory.createForClass(Command);

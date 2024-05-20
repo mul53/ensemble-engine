@@ -35,23 +35,6 @@ export class CommandsController {
     return this.commandsService.create(createCommandDto);
   }
 
-  // @Post()
-  // create(@Body() createCommandDto: CreateCommandDto) {
-  //   console.log('createCommandDto', createCommandDto);
-  //   const params = JSON.parse(createCommandDto.params);
-  //   const commandType = this.findOneType(createCommandDto.name);
-  //   if (!commandType?.template) {
-  //     throw new Error('Command type is not supported yet.');
-  //   }
-  //   console.log('params', params);
-  //   console.log('template', commandType.template);
-  //   const kpi = traverseAndInterpolate(commandType.template, params);
-  //   console.log('kpi', kpi);
-  //   // const kpi = Command.parseKpi(createCommandDto.kpi);
-  //   return commandType
-  //   // return this.commandsService.create({ ...createCommandDto, kpi });
-  // }
-
   @Get()
   findAll() {
     return this.commandsService.findAll();
