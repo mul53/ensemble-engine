@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ExecutorService } from './executor.service';
-import { CommandDto } from 'src/commands/commad.dto';
+import { CommandDto } from 'src/commands-lib/commad.dto';
 
 @Controller('execute')
 export class ExecutorController {

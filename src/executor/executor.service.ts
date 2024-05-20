@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { WalletService } from '../wallet/wallet.service'; // Adjust the import path as necessary
 import { BaseWallet, Contract, JsonRpcProvider, parseEther, parseUnits, Provider, SigningKey, Wallet } from 'ethers';
-import { CommandDto } from 'src/commands/commad.dto';
-import { LoadTestCommandDto } from 'src/commands/load-test.dto';
-import { OnboardCommandDto } from 'src/commands/onboard.dto';
-import { CallCommandDto } from 'src/commands/call-command.dto';
+import { CommandDto } from 'src/commands-lib/commad.dto';
+import { LoadTestCommandDto } from 'src/commands-lib/load-test.dto';
+import { OnboardCommandDto } from 'src/commands-lib/onboard.dto';
+import { CallCommandDto } from 'src/commands-lib/call-command.dto';
 
 function pickRandomValue(arr) {
   if (arr.length === 0) {
@@ -95,7 +95,7 @@ export class ExecutorService {
     }
     const end = new Date()
     
-    // assogn a group ID to the command or onboard the command
+    // assogn a group ID to the command or onb  oard the command
     // take two wallets from the group
     // send a transaction from one wallet to another
 

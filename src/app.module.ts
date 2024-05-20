@@ -6,15 +6,17 @@ import { WalletModule } from './wallet/wallet.module';
 import { ExecutorModule } from './executor/executor.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
-import { GasStrategyModule } from './triggers/gas/gas-strategy.module';
-import { BlockTriggerModule } from './triggers/block/block-trigger.module';
+import { CommandsModule } from './commands/commands.module';
+import { EngineModule } from './engine/engine.module';
 
 @Module({
   imports: [
-    WalletModule, ExecutorModule, GasStrategyModule, BlockTriggerModule,
+    WalletModule, ExecutorModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URI),
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
+    CommandsModule,
+    EngineModule
   ],
   controllers: [AppController],
   providers: [AppService],
