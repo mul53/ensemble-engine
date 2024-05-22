@@ -77,18 +77,24 @@ export class ExecutorService {
     console.log(`Deposit account address: ${this.depositAccount.address}`);
     const wallets = await this.walletService.getWalletsByGroup(groupId);
     let nonce = await this.provider.getTransactionCount(this.depositAccount.address);
-    for (const wallet of wallets) {
-      console.log(`Transferring funds to wallet: ${wallet.address}, using nonce: ${nonce}`);
+
+    const transactionPromises = wallets.map(async (wallet, index) => {
+      console.log(`Transferring funds to wallet: ${wallet.address}, using nonce: ${nonce + index}`);
       const txResponse = await this.depositAccount.sendTransaction({
         to: wallet.address,
         value: amount,
-        nonce: nonce,
+        nonce: nonce + index,
         gasPrice: process.env.GAS_PRICE || undefined,
         gasLimit: 21000
       });
       console.log(`Transaction hash: ${txResponse.hash}`);
-      nonce++;
-    }
+      // Wait for the transaction to be confirmed
+      const receipt = await txResponse.wait();
+      console.log(`Transaction confirmed: ${receipt.hash}`);
+    });
+
+    await Promise.all(transactionPromises);
+    console.log('All transactions confirmed');
     // fetch a deposit account and use it to transfer funds to the wallets
     // console.log(`Onboarding wallets: ${wallets}`);
   }
@@ -105,7 +111,7 @@ export class ExecutorService {
       const toWallet = pickRandomValue(wallets)
       const wallet = new Wallet(fromWallet.privateKey)
 
-      const amount = parseEther('0.0000001');
+      const amount = parseEther('0.000000001');
       console.log(`Transferring funds from ${fromWallet.address} to ${toWallet.address}`);
       const txResponse = await wallet.sendTransaction({
         to: toWallet.address,

@@ -61,6 +61,24 @@ export class CommandsService {
     return this.commandModel.find({ isActive: true }).exec();
   }
 
+  findPending() {
+    return this.commandModel.find({ isActive: true, isPending: true }).exec();
+  }
+
+  async setPending(commandId: string, isPending: boolean): Promise<Command> {
+    const updatedCommand = await this.commandModel.findByIdAndUpdate(
+      commandId,
+      { isPending },
+      { new: true }
+    );
+
+    if (!updatedCommand) {
+      throw new NotFoundException(`Command with ID ${commandId} not found`);
+    }
+
+    return updatedCommand;
+  }
+
   remove(id: number) {
     return `This action removes a #${id} command`;
   }

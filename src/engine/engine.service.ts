@@ -13,10 +13,10 @@ export class EngineService {
   @Interval(5000)
   async loop() {
     console.log('EngineService loop, fetching active commands:');
-    const commands = await this.commandsService.findActive();
+    const commands = await this.commandsService.findPending();
     for (const command of commands) {
       const executor = this.commandExecutorFactory.createExecutor(command.name);
-      executor.execute(command);
+      await executor.execute(command);
     }
   }
 }

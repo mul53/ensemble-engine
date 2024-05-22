@@ -24,6 +24,9 @@ export class Command extends Document {
   @Prop({ default: false })
   isActive: boolean;
 
+  @Prop({ default: true })
+  isPending: boolean;
+
   @Prop({ type: Types.ObjectId, ref: Wallet.name })
   groupId: string;
 }
