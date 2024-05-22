@@ -9,8 +9,6 @@ const generateId = () =>  Math.random().toString(16).slice(2)
 
 @Injectable()
 export class WalletService {
-  public groups: { [key: string]: any } = {}
-  
   constructor(@InjectModel(Wallet.name) private walletModel: Model<WalletDocument>) {}
 
     /**
@@ -62,5 +60,10 @@ export class WalletService {
             throw new NotFoundException(`Wallet with address ${address} not found.`);
         }
         return wallet;
+    }
+
+    async getAllGroupIds(): Promise<string[]> {
+      const groups = await this.walletModel.distinct('groupId').exec();
+      return groups;
     }
 }

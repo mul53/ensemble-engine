@@ -25,4 +25,9 @@ export class WalletController {
     getWallets(@Param('groupId') groupId: string): Promise<Wallet[]> {
       return this.walletService.getWalletsByGroup(groupId);
     }
+
+    @Get('/wallets/group')
+    getAllGroups(): Promise<string[]> {
+      return this.walletService.getAllGroupIds();
+    }
 }

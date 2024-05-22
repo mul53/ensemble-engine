@@ -1,31 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { CommandsService } from './commands.service';
 import { CreateCommandDto } from './dto/create-command.dto';
-import { Command } from './schemas/command.schema';
-
-function traverseAndInterpolate(obj: any, params: any): any {
-  if (typeof obj === 'string') {
-    return obj.replace(/\$\w+/g, (match) => {
-      const key = match.slice(1); // Remove the $ sign
-      return params[key] !== undefined ? params[key] : match;
-    });
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map(item => traverseAndInterpolate(item, params));
-  }
-
-  if (typeof obj === 'object' && obj !== null) {
-    const result: any = {};
-    for (const [key, value] of Object.entries(obj)) {
-      result[key] = traverseAndInterpolate(value, params);
-    }
-    return result;
-  }
-
-  return obj;
-}
-
+import { AddWalletsDto } from './dto/add-wallets.dto';
 @Controller('commands')
 export class CommandsController {
   constructor(private readonly commandsService: CommandsService) {}
@@ -33,6 +9,11 @@ export class CommandsController {
   @Post()
   async create(@Body() createCommandDto: CreateCommandDto) {
     return this.commandsService.create(createCommandDto);
+  }
+
+  @Put('/:id/wallets')
+  async updateGroupId(@Body() addWallets: AddWalletsDto) {
+    return this.commandsService.updateGroupId(addWallets);
   }
 
   @Get()

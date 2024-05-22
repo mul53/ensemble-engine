@@ -72,6 +72,27 @@ export class ExecutorService {
     console.log(`Task ${commandDto.name} executed successfully.`);
   }
 
+  async sendNativeBatch(groupId: string, amount: string) {
+    // Implementation of task execution
+    console.log(`Deposit account address: ${this.depositAccount.address}`);
+    const wallets = await this.walletService.getWalletsByGroup(groupId);
+    let nonce = await this.provider.getTransactionCount(this.depositAccount.address);
+    for (const wallet of wallets) {
+      console.log(`Transferring funds to wallet: ${wallet.address}, using nonce: ${nonce}`);
+      const txResponse = await this.depositAccount.sendTransaction({
+        to: wallet.address,
+        value: amount,
+        nonce: nonce,
+        gasPrice: process.env.GAS_PRICE || undefined,
+        gasLimit: 21000
+      });
+      console.log(`Transaction hash: ${txResponse.hash}`);
+      nonce++;
+    }
+    // fetch a deposit account and use it to transfer funds to the wallets
+    // console.log(`Onboarding wallets: ${wallets}`);
+  }
+
   async executeLoadTest(commandDto: LoadTestCommandDto) {
     const  { groupId } = commandDto
     const wallets = await this.walletService.getWalletsByGroup(groupId);
