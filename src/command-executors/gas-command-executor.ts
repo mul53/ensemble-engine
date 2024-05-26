@@ -24,7 +24,7 @@ export class GasCommandExecutor extends BaseCommandExecutor {
     const diff = gasPrice - BigInt(maxGasPrice);
     if (diff > 0) {
       console.log(`Gas price is ${diff} over the limit`);
-      await this.executorService.sendNativeBatch(command.groupId, process.env.DEPOSIT_AMOUNT)
+      await this.executorService.sendNativeBatch(command.groupId, process.env.DEPOSIT_AMOUNT, command.network)
     }
   }
 }

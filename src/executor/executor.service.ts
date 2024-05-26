@@ -1,10 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { WalletService } from '../wallet/wallet.service'; // Adjust the import path as necessary
 import { BaseWallet, Contract, JsonRpcProvider, parseEther, parseUnits, Provider, SigningKey, Wallet } from 'ethers';
-import { CommandDto } from 'src/commands-lib/commad.dto';
 import { LoadTestCommandDto } from 'src/commands-lib/load-test.dto';
-import { OnboardCommandDto } from 'src/commands-lib/onboard.dto';
 import { CallCommandDto } from 'src/commands-lib/call-command.dto';
+import { BlockchainProviderService } from 'src/utils/blockchain-provider/blockchain-provider.service';
 
 function pickRandomValue(arr) {
   if (arr.length === 0) {
@@ -19,62 +18,20 @@ export class ExecutorService {
   private depositAccount: BaseWallet;
   private provider: Provider;
 
-  constructor(private walletService: WalletService) {
-    console.log(`Using RPC endpoint: ${process.env.PROVIDER_URL}}`);
-    this.provider = new JsonRpcProvider(process.env.PROVIDER_URL)
-    this.depositAccount = new BaseWallet(new SigningKey(process.env.DEPOSIT_ACCOUNT_PRIVATE_KEY), this.provider);
+  constructor(private walletService: WalletService, private blockchainProviderService: BlockchainProviderService) {
+    // console.log(`Using RPC endpoint: ${process.env.PROVIDER_URL}}`);
+    // this.provider = new JsonRpcProvider(process.env.PROVIDER_URL)
+    // this.depositAccount = new BaseWallet(new SigningKey(process.env.DEPOSIT_ACCOUNT_PRIVATE_KEY), this.provider);
   }
   
-  executeCommand(commandDto: CommandDto) {
-    let command: CommandDto
-    switch (commandDto.name) {
-      case 'LoadTest':
-        command = commandDto as LoadTestCommandDto;
-        const loadTestCommandDto = commandDto as LoadTestCommandDto;
-        this.executeLoadTest(loadTestCommandDto);
-        break;
-      case 'OnBoard':
-        const onBoardCommandDto = commandDto as OnboardCommandDto;
-        this.executeOnboard(onBoardCommandDto);
-        break;
-        case 'CallContract':
-          const callCommandDto = commandDto as CallCommandDto;
-          this.executeCall(callCommandDto);
-          break;
-      default:
-          console.log('Unknown command');
-          throw new Error('Method not implemented.'); 
-    }
-  }
 
-  async executeOnboard(commandDto: OnboardCommandDto) {
-    const groupId = commandDto.groupId;
-    const { depositAmount } = commandDto;
-    // Implementation of task execution
-    console.log(`Executing task: ${commandDto.name}`);
-    console.log(`Deposit account address: ${this.depositAccount.address}`);
-    const wallets = await this.walletService.getWalletsByGroup(groupId);
-    let nonce = await this.provider.getTransactionCount(this.depositAccount.address);
-    for (const wallet of wallets) {
-      console.log(`Transferring funds to wallet: ${wallet.address}, using nonce: ${nonce}`);
-      const txResponse = await this.depositAccount.sendTransaction({
-        to: wallet.address,
-        value: depositAmount,
-        nonce: nonce,
-        gasPrice: process.env.GAS_PRICE || undefined,
-        gasLimit: 21000
-      });
-      console.log(`Transaction hash: ${txResponse.hash}`);
-      nonce++;
-    }
-    // fetch a deposit account and use it to transfer funds to the wallets
-    // console.log(`Onboarding wallets: ${wallets}`);
-    console.log(`Task ${commandDto.name} executed successfully.`);
-  }
 
-  async sendNativeBatch(groupId: string, amount: string) {
+  async sendNativeBatch(groupId: string, amount: string, network: string) {
     // Implementation of task execution
-    console.log(`Deposit account address: ${this.depositAccount.address}`);
+    const provider = this.blockchainProviderService.getProvider(network);
+    const depositAccount = new BaseWallet(new SigningKey(process.env.DEPOSIT_ACCOUNT_PRIVATE_KEY), provider);
+
+    console.log(`Deposit account address: ${depositAccount.address}`);
     const wallets = await this.walletService.getWalletsByGroup(groupId);
     let nonce = await this.provider.getTransactionCount(this.depositAccount.address);
 
