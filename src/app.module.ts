@@ -8,7 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CommandsModule } from './commands/commands.module';
 import { EngineModule } from './engine/engine.module';
-import { GasPriceModule } from './gas-price/gas-price.module';
+import { GasPriceModule } from './queries/gas-price/gas-price.module';
 
 @Module({
   imports: [

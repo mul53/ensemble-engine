@@ -1,6 +1,6 @@
 // src/command-executors/command-one-executor.ts
 import { Injectable } from '@nestjs/common';
-import { GasPriceService } from 'src/gas-price/gas-price.service';
+import { GasPriceService } from 'src/queries/gas-price/gas-price.service';
 import { Command } from '../commands/schemas/command.schema';
 import { ExecutorService } from 'src/executor/executor.service';
 import { BaseCommandExecutor } from './base-command-executor';

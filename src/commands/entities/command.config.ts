@@ -14,7 +14,7 @@ export const COMMANDS: CommandConfig[] = [
   {
     name: 'gas-manipulation',
     description: 'Keeps the gas price in the specified range',
-    template: {sub:['gas_price()','$max_gas_price']},
+    template: ['gas_price()','$max_gas_price'],
   },
   {
     name: 'balance-maintain',
@@ -27,6 +27,7 @@ export const COMMANDS: CommandConfig[] = [
   {
     name: 'game-activity',
     description: 'Generate game activity',
-    template: {sub:[{'volume_of()':'$contract_address'},'$min_volume']},
+    template: [[{'volume_of()':['$contract_address', '$token_address']},'$min_volume'],
+      [{'number_of_players()': '$contract_address'}, '$min_players']],
   },
 ];
