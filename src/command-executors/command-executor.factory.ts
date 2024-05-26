@@ -12,7 +12,7 @@ export class CommandExecutorFactory {
   createExecutor(commandName: string): CommandExecutor {
     switch (commandName) {
       case 'gas-manipulation':
-        return this.moduleRef.get(GasCommandExecutor, { strict: false });
+        return this.moduleRef.get(GasCommandExecutor, { strict: false },);
       case 'game-activity':
         return this.moduleRef.get(GameActivityCommandExecutor, { strict: false });
       default:

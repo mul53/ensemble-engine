@@ -9,16 +9,18 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CommandsModule } from './commands/commands.module';
 import { EngineModule } from './engine/engine.module';
 import { GasPriceModule } from './queries/gas-price/gas-price.module';
+import { BlockchainProviderModule } from './utils/blockchain-provider/blockchain-provider.module';
 
 @Module({
   imports: [
-    WalletModule, ExecutorModule,
+    WalletModule, ExecutorModule, BlockchainProviderModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     ScheduleModule.forRoot(),
     CommandsModule,
     EngineModule,
-    GasPriceModule
+    GasPriceModule,
+    BlockchainProviderModule
   ],
   controllers: [AppController],
   providers: [AppService],
