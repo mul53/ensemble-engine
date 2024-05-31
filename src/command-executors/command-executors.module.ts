@@ -7,13 +7,15 @@ import { GasCommandExecutor } from './gas-command-executor';
 import { ExecutorModule } from 'src/executor/executor.module';
 import { CommandsModule } from 'src/commands/commands.module';
 import { BlockchainProviderModule } from 'src/utils/blockchain-provider/blockchain-provider.module';
+import { GameActivityCommandExecutor } from './game-activity-command-executor';
+import { VolumeModule } from 'src/queries/volume/volume.module';
 
 
 
 @Module({
-  imports: [ExecutorModule, CommandsModule, BlockchainProviderModule],
+  imports: [ExecutorModule, CommandsModule, BlockchainProviderModule, VolumeModule],
   controllers: [CommandExecutorsController],
-  providers: [CommandExecutorsService, CommandExecutorFactory, GasPriceService, GasCommandExecutor],
+  providers: [CommandExecutorsService, CommandExecutorFactory, GasPriceService, GasCommandExecutor, GameActivityCommandExecutor],
   exports: [CommandExecutorFactory],
 })
 export class CommandExecutorsModule {}

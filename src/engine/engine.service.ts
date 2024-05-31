@@ -14,6 +14,9 @@ export class EngineService {
   async loop() {
     console.log('EngineService loop, fetching active commands:');
     const commands = await this.commandsService.findPending();
+    if (commands.length === 0) { 
+      console.log('No active commands found');
+    }
     for (const command of commands) {
       const executor = this.commandExecutorFactory.createExecutor(command.name);
       await executor.execute(command);
