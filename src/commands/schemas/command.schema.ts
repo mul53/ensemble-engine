@@ -1,22 +1,22 @@
 // src/commands/schemas/command.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { COMMANDS } from '../entities/command.config';
+import { COMMAND_TYPES } from '../entities/command-type.entitiy';
 import { Wallet } from 'src/wallet/wallet.schema';
 
-export interface Kpi {
+export interface Goal {
   template: string;
   params: Object; // Adjust the type as necessary
   func: string;
 }
 
-@Schema()
+@Schema({ timestamps: true })
 export class Command extends Document {
-  @Prop({ required: true, enum: COMMANDS.map(cmd => cmd.name) })
+  @Prop({ required: true, enum: COMMAND_TYPES.map(cmd => cmd.name) })
   name: string;
 
   @Prop({ required: true, type: Object })
-  kpi: Kpi;
+  goal: Goal;
 
   @Prop({ required: true })
   network: string;

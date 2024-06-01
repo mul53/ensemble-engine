@@ -17,7 +17,7 @@ export class GasCommandExecutor extends BaseCommandExecutor {
   }
 
   async executeImpl(command: Command) : Promise<void> {
-    const maxGasPrice = command.kpi.params['max_gas_price']
+    const maxGasPrice = command.goal.params['max_gas_price']
     console.log('Checking Command Gas');
     const gasPrice = await this.gasPriceService.fetch(command.network)
     console.log(maxGasPrice)

@@ -16,9 +16,9 @@ export class GameActivityCommandExecutor extends BaseCommandExecutor {
   }
 
   async executeImpl(command: Command) : Promise<void> {
-    const { network, kpi } = command
-    const tokenAddress = kpi.params['token_address']
-    const contractAddress = kpi.params['token_address']
+    const { network, goal } = command
+    const tokenAddress = goal.params['token_address']
+    const contractAddress = goal.params['token_address']
 
     console.log('Checking Command Gas');
     const volume = await this.volumeService.fetch(contractAddress, tokenAddress, network)
