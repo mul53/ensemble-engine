@@ -19,7 +19,8 @@ export const COMMAND_TYPES: CommandType[] = [
   {
     name: 'maintain-balance',
     description: 'Maintain account balances in a certain range',
-    template: [{'balance_of()': '$tokenAddress'} ,'$min_balance','$max_balance'],
+    // template: [{'balance_of()': ['$contract_address', '$token_address']} ,'$min_balance','$max_balance'],
+    template: [{'in_range()': [{'balance_of()': ['$contract_address', '$token_address']}, '$min_balance', '$max_balance'], 'target:': '$target_address'}],
   },
   {
     name: 'generate-game-activity',
