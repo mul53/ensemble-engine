@@ -1,9 +1,11 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { WalletService } from '../wallet/wallet.service'; // Adjust the import path as necessary
-import { BaseWallet, Contract, JsonRpcProvider, parseEther, parseUnits, Provider, SigningKey, Wallet } from 'ethers';
+import { BaseWallet, Contract, parseEther, Provider, SigningKey, Wallet, MaxUint256 } from 'ethers';
 import { LoadTestCommandDto } from 'src/commands-lib/load-test.dto';
 import { CallCommandDto } from 'src/commands-lib/call-command.dto';
 import { BlockchainProviderService } from 'src/utils/blockchain-provider/blockchain-provider.service';
+import dementedAbi from 'abi/demented.abi.json';
+import erc20Abi from 'abi/erc20.abi.json';
 
 function pickRandomValue(arr) {
   if (arr.length === 0) {
@@ -24,6 +26,34 @@ export class ExecutorService {
     // this.depositAccount = new BaseWallet(new SigningKey(process.env.DEPOSIT_ACCOUNT_PRIVATE_KEY), this.provider);
   }
   
+  async playGame(walletAddress: string, walletPk: string, contractAddress: string, tokenAddress: string, network: string) {
+    console.log(`Playing game with wallet ${walletAddress} on network ${network}`);
+
+    const provider = this.blockchainProviderService.getProvider(network);
+    
+    const wallet = new BaseWallet(new SigningKey(walletPk), provider);
+
+    const gameContract = new Contract(contractAddress, dementedAbi, wallet);
+    const tokenContract = new Contract(tokenAddress, erc20Abi, wallet);
+
+    try {
+      const allowance = await tokenContract.allowance(walletAddress, contractAddress);
+      console.log(`Allowance: ${allowance}`);
+      if (allowance < 1) {
+        console.log(`Allowance ${allowance} is less than 1, approving contract ${contractAddress} to spend tokens`);
+      //   const approveTx = await tokenContract.approve(contractAddress, MaxUint256);
+      //   await approveTx.wait();
+      //   console.log(`Approved contract ${contractAddress} to spend tokens`);
+      }
+      // TODO: check if not played before in the round 
+      const tx = await gameContract.play();
+      // await tx.wait();
+      // console.log(`Transaction successful with hash: ${tx.hash}`);
+    } catch (error) {
+      console.error(`Error playing game: ${error}`);
+    }
+  
+  }
 
 
   async sendNativeBatch(groupId: string, amount: string, network: string) {

@@ -13,7 +13,7 @@ export class BlockchainProviderService {
     for (const [network, url] of Object.entries(networkUrls)) {
       if (url) {
         this.providers[network] = new JsonRpcProvider(url);
-        console.log(`Initialized provider for ${network}`);
+        console.log(`Initialized provider for ${network} with url endpoint: ${url}`);
       } else {
         console.warn(`RPC URL for ${network} is not set`);
       }

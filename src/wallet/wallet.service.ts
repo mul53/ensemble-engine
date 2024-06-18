@@ -41,12 +41,28 @@ export class WalletService {
    * @throws {NotFoundException} Throws if no group is found for the given ID.
    */
     async getWalletsByGroup(groupId: string): Promise<Wallet[]> {
-      const wallets = await this.walletModel.find({ groupId }, ['address']).exec();
+      const wallets = await this.walletModel.find({ groupId }).exec();
       if (!group) {
         throw new NotFoundException(`Wallet group with ID ${groupId} not found.`);
       }
       return wallets;
     }
+
+    /**
+   * Picks a random wallet from a specified group.
+   * @param {string} groupId - The identifier of the wallet group.
+   * @returns {Promise<Wallet>} A randomly selected wallet from the group.
+   * @throws {NotFoundException} Throws if no group is found for the given ID.
+   */
+  async pickWalletFromGroup(groupId: string): Promise<Wallet> {
+    console.log(`picking wallet from group ${groupId}`)
+    const wallets = await this.getWalletsByGroup(groupId);
+    if (wallets.length === 0) {
+      throw new NotFoundException(`No wallets found for group ${groupId}`);
+    }
+    const randomIndex = Math.floor(Math.random() * wallets.length);
+    return wallets[randomIndex];
+  }
 
       /**
      * Retrieves a wallet by its address.

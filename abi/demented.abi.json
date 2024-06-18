@@ -1,0 +1,13 @@
+[
+  {
+    "constant": false,
+    "inputs": [
+    ],
+    "name": "play",
+    "outputs": [
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

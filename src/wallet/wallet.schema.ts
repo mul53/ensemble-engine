@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type WalletDocument = Wallet & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Wallet {
     @Prop({ required: true })
     groupId: string;
