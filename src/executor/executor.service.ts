@@ -4,7 +4,7 @@ import { BaseWallet, Contract, parseEther, Provider, SigningKey, Wallet, MaxUint
 import { LoadTestCommandDto } from 'src/commands-lib/load-test.dto';
 import { CallCommandDto } from 'src/commands-lib/call-command.dto';
 import { BlockchainProviderService } from 'src/utils/blockchain-provider/blockchain-provider.service';
-import dementedAbi from 'abi/demented.abi.json';
+import DGRouletteAbi from 'abi/DGRoulette.abi.json';
 import erc20Abi from 'abi/erc20.abi.json';
 
 function pickRandomValue(arr) {
@@ -13,6 +13,15 @@ function pickRandomValue(arr) {
   }
   const randomIndex = Math.floor(Math.random() * arr.length);
   return arr[randomIndex];
+}
+
+
+/**
+ * Generates a random number between 5 and 20.
+ * @returns {number} A random number between 5 and 20.
+ */
+function generateRandomAmount(): number {
+  return Math.floor(Math.random() * (20 - 5 + 1)) + 5;
 }
 
 @Injectable()
@@ -25,6 +34,14 @@ export class ExecutorService {
     // this.provider = new JsonRpcProvider(process.env.PROVIDER_URL)
     // this.depositAccount = new BaseWallet(new SigningKey(process.env.DEPOSIT_ACCOUNT_PRIVATE_KEY), this.provider);
   }
+
+  async getRoundInfo(contractAddress: string, network: string): Promise<number> {
+    const provider = this.blockchainProviderService.getProvider(network);
+
+    const gameContract = new Contract(contractAddress, DGRouletteAbi, provider);
+    let round = await gameContract.currentRoundIndex.staticCall()
+    return round
+  }
   
   async playGame(walletAddress: string, walletPk: string, contractAddress: string, tokenAddress: string, network: string) {
     console.log(`Playing game with wallet ${walletAddress} on network ${network}`);
@@ -33,22 +50,26 @@ export class ExecutorService {
     
     const wallet = new BaseWallet(new SigningKey(walletPk), provider);
 
-    const gameContract = new Contract(contractAddress, dementedAbi, wallet);
+    const gameContract = new Contract(contractAddress, DGRouletteAbi, wallet);
     const tokenContract = new Contract(tokenAddress, erc20Abi, wallet);
 
+    // TODO: check if not played before in the round
     try {
       const allowance = await tokenContract.allowance(walletAddress, contractAddress);
       console.log(`Allowance: ${allowance}`);
       if (allowance < 1) {
         console.log(`Allowance ${allowance} is less than 1, approving contract ${contractAddress} to spend tokens`);
-      //   const approveTx = await tokenContract.approve(contractAddress, MaxUint256);
-      //   await approveTx.wait();
-      //   console.log(`Approved contract ${contractAddress} to spend tokens`);
+        const approveTx = await tokenContract.approve(contractAddress, MaxUint256);
+        await approveTx.wait();
+        console.log(`Approved contract ${contractAddress} to spend tokens`);
       }
-      // TODO: check if not played before in the round 
-      const tx = await gameContract.play();
-      // await tx.wait();
-      // console.log(`Transaction successful with hash: ${tx.hash}`);
+      
+      const amount = generateRandomAmount();
+      console.log(`Placing bet of ${amount} on game ${contractAddress}`) 
+      const tx = await gameContract.placeBet(parseEther(amount.toString()));
+      console.log(`Transaction hash: ${tx.hash}`)
+      await tx.wait();
+      console.log(`Transaction successful with hash: ${tx.hash}`);
     } catch (error) {
       console.error(`Error playing game: ${error}`);
     }
