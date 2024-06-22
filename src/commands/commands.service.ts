@@ -12,6 +12,7 @@ export class CommandsService {
   constructor(@InjectModel(Command.name) private commandModel: Model<Command>) {}
 
   async create(createCommandDto: CreateCommandDto): Promise<Command> {
+    console.log(`creating command of type ${createCommandDto.name}`)
     const commandType = this.findOneType(createCommandDto.name);
 
     if (!commandType?.template) {

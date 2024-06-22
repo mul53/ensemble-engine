@@ -13,7 +13,7 @@ export class CommandExecutorFactory {
     switch (commandName) {
       case 'manipulate-gas':
         return this.moduleRef.get(GasCommandExecutor, { strict: false },);
-      case 'game-activity':
+      case 'generate-game-activity':
         return this.moduleRef.get(GameActivityCommandExecutor, { strict: false });
       default:
         throw new Error(`No executor found for command: ${commandName}`);
