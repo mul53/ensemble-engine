@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { Wallet, WalletDocument } from './wallet.schema';
 import { Wallet as EthersWallet } from 'ethers';
 import { group } from 'console';
+import { Step } from 'src/workflows/entities/step.entity';
+import { Workflow } from 'src/workflows/entities/workflow.entity';
 
 const generateId = () =>  Math.random().toString(16).slice(2)
 
@@ -11,7 +13,7 @@ const generateId = () =>  Math.random().toString(16).slice(2)
 export class WalletService {
   constructor(@InjectModel(Wallet.name) private walletModel: Model<WalletDocument>) {}
 
-    /**
+  /**
    * Creates a specified number of Ethereum wallets and groups them under a unique identifier.
    * Each wallet is randomly generated.
    * 
@@ -32,6 +34,14 @@ export class WalletService {
       newWallet.save();
     }
     return groupId
+  }
+
+  async loadWallet(step: Step, workflow: Workflow): Promise<Wallet> {
+    console.log(`loading wallet for workflow ${workflow.name}, wallet data: ${JSON.stringify(workflow.wallet)}`)
+    const wallets = await this.getWalletsByGroup(workflow.wallet.group)
+
+    const randomIndex = Math.floor(Math.random() * wallets.length);
+    return wallets[randomIndex];
   }
 
     /**
@@ -64,18 +74,18 @@ export class WalletService {
     return wallets[randomIndex];
   }
 
-      /**
-     * Retrieves a wallet by its address.
-     * @param {string} address - The Ethereum address of the wallet.
-     * @returns {Promise<Wallet>} The wallet document if found.
-     * @throws {NotFoundException} Throws if no wallet is found for the given address.
-     */
-      async getWallet(address: string): Promise<Wallet> {
-        const wallet = await this.walletModel.findOne({ address }).exec();
-        if (!wallet) {
-            throw new NotFoundException(`Wallet with address ${address} not found.`);
-        }
-        return wallet;
+  /**
+   * Retrieves a wallet by its address.
+   * @param {string} address - The Ethereum address of the wallet.
+   * @returns {Promise<Wallet>} The wallet document if found.
+   * @throws {NotFoundException} Throws if no wallet is found for the given address.
+   */
+    async getWallet(address: string): Promise<Wallet> {
+      const wallet = await this.walletModel.findOne({ address }).exec();
+      if (!wallet) {
+          throw new NotFoundException(`Wallet with address ${address} not found.`);
+      }
+      return wallet;
     }
 
     async getAllGroupIds(): Promise<string[]> {

@@ -8,7 +8,6 @@ export class VolumeService {
   tokenAbi: any;
 
   constructor(private blockchainProviderService: BlockchainProviderService) {
-    console.log('GasStrategyService initialized');
     console.log(`Using RPC endpoint: ${process.env.PROVIDER_URL}}`);
 
     const abiPath = './abi/erc20.abi.json'

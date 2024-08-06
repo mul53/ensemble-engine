@@ -1,0 +1,14 @@
+- name: demented_roulette
+  steps:
+  - name: place_bet
+    interaction:
+    - name: place_bet
+      contract: DementedRoulette
+      method: placeBet
+      arguments:
+        - bet: generateRandomAmount
+  - name: claim_prize
+    interaction:
+    - name: claim_prize
+      contract: DementedRoulette
+      method: claim

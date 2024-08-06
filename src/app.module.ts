@@ -10,6 +10,8 @@ import { CommandsModule } from './commands/commands.module';
 import { EngineModule } from './engine/engine.module';
 import { GasPriceModule } from './queries/gas-price/gas-price.module';
 import { BlockchainProviderModule } from './utils/blockchain-provider/blockchain-provider.module';
+import { WorkflowsModule } from './workflows/workflows.module';
+import { WorkflowEngineModule } from './engine-v2/workflow-engine.module';
 
 @Module({
   imports: [
@@ -19,8 +21,10 @@ import { BlockchainProviderModule } from './utils/blockchain-provider/blockchain
     ScheduleModule.forRoot(),
     CommandsModule,
     EngineModule,
+    WorkflowEngineModule,
     GasPriceModule,
-    BlockchainProviderModule
+    BlockchainProviderModule,
+    WorkflowsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

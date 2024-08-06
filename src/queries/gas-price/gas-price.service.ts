@@ -3,10 +3,7 @@ import { BlockchainProviderService } from '../../utils/blockchain-provider/block
 
 @Injectable()
 export class GasPriceService {
-
-  constructor(private providerService: BlockchainProviderService) {
-    console.log('GasStrategyService initialized');
-  }
+  private providerService: BlockchainProviderService;
 
   async fetch(networkName: string, ): Promise<bigint> {
     const provider = this.providerService.getProvider(networkName);
